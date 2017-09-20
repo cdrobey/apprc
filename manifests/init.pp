@@ -19,7 +19,7 @@ class apprc (
     file { '/etc/init.d/$service_name':
         ensure  => file,
         #content => epp('service.epp', {'apprc/$service_name' => '$service_name'}),
-        content => epp('apprc/apprc_service.epp'),
+        source  => 'puppet:///modules/apprc/apprc_service.epp',
     }
     service { '$service_name':
         ensure     => 'running',
