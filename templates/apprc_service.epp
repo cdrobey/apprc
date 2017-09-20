@@ -1,0 +1,328 @@
+# chkconfig: 0136 70 39 
+### BEGIN INIT INFO
+# Provides: APPSVC 
+# Required-Start:
+# Required-Stop:
+# Default-Start: 3
+# Default-Stop: 0 1 6 
+### END INIT INFO
+# Source function library.
+. /etc/init.d/functions
+
+# <APPSVC> startup-SHUTDOWN Script
+#MAXIMUM WAIT TIME BEFORE INIT OR TERMINATE A PROCESS DEFAULT VALUE IS 180 SECONDS
+MAX_WAIT_TIME=180
+CUR_DIR=/etc/rc.d/init.d
+LOGDIR=/var/log
+LOGFILE=$LOGDIR/APP_StartStopScripts.log
+#DATE=$(date +%m%d%y:%H:%M:%S)
+LOGDATE=$(date +%Y-%m-%d' '%H:%M:%S)
+STDOUT_LOG=$LOGDIR/APP_stdout.log
+STDERR_LOG=$LOGDIR/APP_stderr.log
+TMP_LOG=$LOGDIR/APP_tmp.log
+
+INFO(){
+    local msg="$1"
+    echo "[`date +%m%d%y:%H:%M:%S`] [INFO]  $msg" |tee -a $LOGFILE
+}
+
+DEBUG(){
+    local msg="$1"
+    echo "[`date +%m%d%y:%H:%M:%S`] [DEBUG]  $msg" |tee -a $LOGFILE
+}
+
+ERROR(){
+    local msg="$1"
+    echo "[`date +%m%d%y:%H:%M:%S`] [ERROR]  $msg" |tee -a $LOGFILE
+}
+
+PRINT_MSG(){
+    if [ -s "$STDOUT_LOG" ]
+    then
+       echo "[`date +%m%d%y:%H:%M:%S`] [INFO]  `cat $STDOUT_LOG`"|tee -a $LOGFILE 
+    fi
+}
+
+PRINT_ERR(){
+    if [ -s "$STDERR_LOG" ]
+    then
+      echo "[`date +%m%d%y:%H:%M:%S`] [ERROR]  `cat $STDERR_LOG`"|tee -a $LOGFILE
+    fi
+}
+
+PRINT_ALL(){
+    PRINT_MSG
+    PRINT_ERR
+}
+
+################################################################################
+# wait_for_term method: This function will wait a background proceess to end
+#                     gracefully. If a process doesn't end within a specific time
+#                     define by MAX_WAIT_TIME variable, the process will kill.
+#                     A default value of MAX_WAIT_TIME are 180 seconds
+#                     Input: process id
+################################################################################
+wait_for_term(){
+
+second_cnt=$MAX_WAIT_TIME
+ps -p $1 >/dev/null
+rc=$?
+while [[  rc -eq 0 && second_cnt -gt 0 ]]
+do
+   ps -p $1 >/dev/null
+   rc=$?
+
+   pid=`ps -p $1`
+   sleep 1
+   ((second_cnt=second_cnt - 1))
+done
+
+  PRINT_MSG
+  PRINT_ERR
+
+if [ $rc -eq 0 ]; then
+   #wait for 180 second/3 minutes before kill the process id
+   kill -9 $1
+   INFO "wait_for_term-> kill -9 $1"
+fi
+
+   INFO "wait_for_term completed -> second = $(($MAX_WAIT_TIME - $second_cnt))"
+
+}
+
+
+
+################################################################################ 
+# cus_wait_for_term method: This function will wait a background proceess to end
+#                     gracefully. If a process doesn't end within a specific time 
+#                     define by MAX_WAIT_TIME variable, the process will kill.
+#                     A default value of MAX_WAIT_TIME are 180 seconds, 
+#                     User could define a specific wait time to override the default value.
+#                          Parameter 1:  process id
+#                          Parameter 2:  user define wait time in second.
+################################################################################ 
+cus_wait_for_term(){
+
+if [ $2 -gt 0 ] # use custom value
+then
+   second_cnt=$2
+else            # use default value
+   second_cnt=$MAX_WAIT_TIME
+fi
+
+CUST_MAX_WAIT_TIME=$second_cnt
+
+ps -p $1 >/dev/null
+rc=$?
+while [[  rc -eq 0 && second_cnt -gt 0 ]]
+do
+   ps -p $1 >/dev/null
+   rc=$?
+
+   pid=`ps -p $1`  
+   sleep 1
+   ((second_cnt=second_cnt - 1))
+done
+
+  PRINT_MSG
+  PRINT_ERR
+
+if [ $rc -eq 0 ]; then
+   #wait for 180 second/3 minutes before kill the process id
+   kill -9 $1
+   INFO "custom_wait_for_term-> kill -9 $1"
+fi
+
+INFO "custom_wait_for_term completed -> second = $(($CUST_MAX_WAIT_TIME - $second_cnt))"
+
+}
+
+################################################################################ 
+# wait_for_init method: This function will wait a background proceess to start
+#                     successfully. If a process doesn't start within a specific time 
+#                     define by MAX_WAIT_TIME variable, the function will continue
+#                     to execute the next command.  A default value of MAX_WAIT_TIME 
+#                     are 180 seconds
+#                     Input:  process id
+################################################################################ 
+wait_for_init(){
+
+second_cnt=$MAX_WAIT_TIME
+ps -p $1 >/dev/null
+rc=$?
+while [[  rc -eq 0 && second_cnt -gt 0 ]]
+do
+   ps -p $1 >/dev/null
+   rc=$?
+
+   pid=`ps -p $1`
+   sleep 1
+   ((second_cnt=second_cnt - 1))
+done
+
+  PRINT_MSG
+  PRINT_ERR
+
+INFO "wait_for_init completed -> second = $(($MAX_WAIT_TIME - $second_cnt))"
+
+}
+
+################################################################################ 
+# cus_wait_for_init method: This function will wait a background proceess to start
+#                     successfully. If a process doesn't start within a specific time 
+#                     define by MAX_WAIT_TIME variable, the function will continue
+#                     to execute the next command.  A default value of MAX_WAIT_TIME 
+#                     are 180 seconds, User could define a specific wait time to override 
+#                     the default value.
+#                     Input:
+#                          Parameter 1:  process id
+#                          Parameter 2:  user define wait time in second.
+################################################################################ 
+cus_wait_for_init(){
+
+if [ $2 -gt 0 ] # use custom value
+then
+   second_cnt=$2
+else            # use default value
+   second_cnt=$MAX_WAIT_TIME
+fi
+
+CUST_MAX_WAIT_TIME=$second_cnt
+
+ps -p $1 >/dev/null
+rc=$?
+while [[  rc -eq 0 && second_cnt -gt 0 ]]
+do
+   ps -p $1 >/dev/null
+   rc=$?
+
+   pid=`ps -p $1`
+   sleep 1
+   ((second_cnt=second_cnt - 1))
+done
+
+  PRINT_MSG
+  PRINT_ERR
+  
+INFO "cus_wait_for_init completed -> second = $(($CUST_MAX_WAIT_TIME - $second_cnt))"
+
+}
+
+
+################################################################################
+# wait_for_init_n_validation method: This function will wait a background proceess to start
+#                     successfully. If a process doesn't start within a specific time
+#                     define by MAX_WAIT_TIME variable, the function will continue
+#                     to execute the next command.  A default value of MAX_WAIT_TIME
+#                     are 180 seconds
+#                     Input:  None
+################################################################################
+wait_for_init_n_validation(){
+
+second_cnt=$MAX_WAIT_TIME
+$CUR_DIR/APP_Validation.ksh >/dev/null
+rc=$?
+while [[  rc -eq 1 && second_cnt -gt 0 ]]
+do
+   $CUR_DIR/APP_Validation.ksh >/dev/null
+   rc=$?
+
+   sleep 5
+   ((second_cnt=second_cnt - 5))
+done
+
+INFO "wait_for_init_n_validation completed -> second = $(($MAX_WAIT_TIME - $second_cnt))" 
+
+}
+
+
+
+################################################################################ 
+# START BLOCK
+################################################################################ 
+startblock() {
+   INFO "------------------------------------------------------------------------------" 
+   INFO "$0 Action - Start - executed at $DATE" 
+   #------------------------------------------------------------------------------#
+   #  Start Application Services
+   #------------------------------------------------------------------------------#
+   #su - <application_userid> -c "</application/start_script/or_command>" >$STDOUT_LOG 2>$STDERR_LOG &
+   #wait_for_init $!
+   #------------------------------------------------------------------------------#
+   #      ADD COMMANDS TO START APPLICATION SERVICES HERE
+
+	su - wasadm -c "/home/wasadm/start_websphere" >$STDOUT_LOG 2>$STDERR_LOG &
+	wait_for_init $!
+
+  
+   #  If application takes so long to startup, the script will put a misleading 
+   #  message to standard output.  To correct, you comment out the # in front of 
+   #  wait_for_init_n_validation function. If you don't want to see the warning 
+   #  error messages: APPLICATION SERVICES START FAILED
+   wait_for_init_n_validation
+   #------------------------------------------------------------------------------#
+   #   Post StartUp - Application Validation
+   #------------------------------------------------------------------------------#
+   # ADD APPLICATION VALIDATION LOGIC HERE: SCRIPTS/COMMANDS
+   #
+   # BSM_PostHealthCheck
+   #
+   #------------------------------------------------------------------------------#
+   $CUR_DIR/APP_Validation.ksh >$STDOUT_LOG 2>$STDERR_LOG; PRINT_ALL
+   if [ $? = 0 ] # SUCCESS
+      then
+        INFO "$0 APPLICATION SERVICES STARTED SUCCESSFULLY at $DATE" 
+      else          # FAILURE
+        INFO "$0 APPLICATION SERVICES START FAILED at $DATE" 
+   fi
+
+   #------------------------------------------------------------------------------#
+   # END OF START BLOCK
+   #------------------------------------------------------------------------------#
+}
+
+################################################################################ 
+# STOP BLOCK
+################################################################################ 
+stopblock() {
+   INFO "------------------------------------------------------------------------------" 
+   INFO "$0 Action - Stop - executed at $DATE"
+   #------------------------------------------------------------------------------#
+   #  Stop Application Services
+   #------------------------------------------------------------------------------#
+   #su - <application_userid> -c "</application/stop_script/or_command>" >$STDOUT_LOG 2>$STDERR_LOG &
+   #wait_for_term $!
+   #------------------------------------------------------------------------------#
+   #      ADD COMMANDS TO STOP APPLICATION SERVICES HERE
+
+    
+	su - wasadm -c "/home/wasadm/stop_websphere" >$STDOUT_LOG 2>$STDERR_LOG &
+	wait_for_term $!
+	
+   #------------------------------------------------------------------------------#
+   # END OF STOP BLOCK
+   #------------------------------------------------------------------------------#
+
+}
+
+case "$1" in
+    
+start)
+     startblock
+     ;;
+stop)
+    stopblock
+     ;;
+restart)
+    INFO "Restart is not supported by $0"
+     ;;
+
+ *)
+    INFO "Usage: $0 {start|stop}"
+     ;;
+
+esac
+
+exit 0
+
+######### THIS IS THE END OF THE STARTUP SCRIPT TEMPLATE ########

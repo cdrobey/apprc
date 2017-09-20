@@ -1,0 +1,96 @@
+#!/bin/ksh
+# SERVER NAME : CSKPCLOUDXN0315.CLOUD.KP.ORG
+#
+# ----------------------------------------------------------------
+# Revision history
+# revision 1.4
+# date: 6/15/2017 ; author: ASG CS
+# Clean up script template
+# ----------------------------------------------------------------
+# Initial revision
+# date: 5/31/2017 ; author: ASG CS
+# ----------------------------------------------------------------
+# <APP_Validation.ksh> Application Validation Script
+# This will be used by the main startup and shutdown script to confirm if the application 
+# services/processes are running or not.  If any processes must be started and running 
+# by applications, we need to call check_proccess/check_process to check the processes
+# This must exit with either 1 or 0
+# 1- means one or more required process is/are not running
+# 0 - mean all required proccess is currently running
+FAILURE=1
+SUCCESS=0
+RC=1
+
+################################################################################ 
+# check_process: This function is for checking if a proceess is running
+#                  Input:   a unique strings to grep for a running process
+#                          For example: To check if tomcat is running
+#                          input string is "tomcat"       
+#                  Return:  1 - if a running process is not found by grep command
+#                           0 - if tomcat process is found by grep command.
+################################################################################ 
+check_process(){
+  # check the args
+  if [ "$1" = "" ];
+  then
+         return $FAILURE
+  fi
+
+  #Check the process number and count
+  PROCESS_NUM=$(ps -ef | grep "$1" | grep -v "grep" | wc -l)
+  # for degbuging...
+  if [ $PROCESS_NUM -ge 1 ];
+  then
+	  return $SUCCESS
+  else
+	  return $FAILURE
+  fi
+}
+get_status()
+{
+
+if [ "$1" -ne "0" ] # Failure
+then
+ echo "Application services $2 are failed at start up. Please check /var/adm/log/APP_StartStopScripts.log for more information"
+fi          
+
+
+}
+
+echo "Application validation checking..."
+#------------------------------------------
+# check wasadm dmgr process
+#------------------------------------------
+#Check Process 1:
+check_process "cskpcloudxn0315Cell03 DMGRUAT03 dmgr" 
+P1=$?
+PC=$P1
+get_status $P1 "cskpcloudxn0315Cell03 DMGRUAT03 dmgr"
+
+#Check Process 2:
+check_process "cskpcloudxn0315Cell04 DMGRUAT04 dmgr" 
+P1=$?
+get_status $P1 "cskpcloudxn0315Cell04 DMGRUAT04 dmgr"
+PC=`expr $PC + $P1`
+
+
+#Check Process 3:
+check_process "cskpcloudxn0315Cell02 DMGRUAT02 dmgr" 
+P1=$?
+get_status $P1 "cskpcloudxn0315Cell02 DMGRUAT02 dmgr"
+PC=`expr $PC + $P1`
+
+
+#Check Process 4:
+check_process "cskpcloudxn0315Cell01 DMGRUAT01 dmgr" 
+P1=$?
+get_status $P1 "cskpcloudxn0315Cell01 DMGRUAT01 dmgr"
+PC=`expr $PC + $P1`
+RC=$PC
+
+if [ $RC -eq 0 ] # SUCCESS
+then
+  exit $SUCCESS
+else          # FAILURE
+   exit $FAILURE
+fi
