@@ -16,9 +16,9 @@
 class apprc (
   $service_name = test,
 ){
-    file { '/etc/init.d/test':
+    file { '/etc/init.d/$service_name':
         ensure  => file,
-        content => epp('apprc/pprc_service.epp'),
+        content => epp('apprc/apprc_service.epp'),
     }
     service { '$service_name':
         ensure     => 'running',
