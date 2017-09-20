@@ -28,7 +28,7 @@ class apprc (
         hasrestart => true,
         hasstatus  => true,
         enable     => true,
-        provider   => 'redhat'
-        #subscribe  => File["/etc/init.d/${service_name}"]
+        provider   => 'redhat',
+        subscribe  => File["/etc/init.d/${service_name}"],
     }
 }
