@@ -17,16 +17,18 @@ class apprc (
   $service_name = test,
 ){
     file { "/etc/init.d/${service_name}":
-        ensure  => file,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        content => epp('apprc/apprc_service.epp'),
+        ensure   => file,
+        owner    => 'root',
+        group    => 'root',
+        mode     => '0755',
+        content  => epp('apprc/apprc_service.epp'),
+        provider => 'redhat'
     }
     service { 'testing':
         ensure     => 'running',
         hasrestart => true,
         hasstatus  => true,
         enable     => true,
+        subscribe  => File["/etc/init.d/${service_name}"]
     }
 }
