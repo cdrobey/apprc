@@ -18,12 +18,15 @@ class apprc (
 ){
     file { "/etc/init.d/${service_name}":
         ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
         content => epp('apprc/apprc_service.epp'),
     }
-    #service { '$service_name':
-        #ensure     => 'running',
-        #hasrestart => true,
-        #hasstatus  => true,
-        #enable     => true,
-    #}
+    service { $service_name:
+        ensure     => 'running',
+        hasrestart => true,
+        hasstatus  => true,
+        enable     => true,
+    }
 }
