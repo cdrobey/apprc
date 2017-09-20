@@ -14,7 +14,8 @@
 # @example
 #   include apprc
 class apprc (
-  $service_name = test,
+  $service_name     = 'Default_SVC',
+  $service_validate = 'Default_VALIDATE',
 ){
     file { "/etc/init.d/${service_name}":
         ensure  => file,
@@ -23,12 +24,22 @@ class apprc (
         mode    => '0755',
         content => epp('apprc/apprc_service.epp'),
     }
+    file { "/etc/init.d/${service_validate}":
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        content => epp('apprc/apprc_validate.epp'),
+    }
     service { 'testing':
         ensure     => 'running',
         hasrestart => true,
         hasstatus  => true,
         enable     => true,
         provider   => 'redhat',
-        subscribe  => File["/etc/init.d/${service_name}"],
+        subscribe  => File[{
+            "/etc/init.d/${service_name}",
+            "/etc/init.d/${service_validate}",
+        }],
     }
 }
