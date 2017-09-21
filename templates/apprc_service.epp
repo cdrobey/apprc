@@ -307,10 +307,7 @@ startblock() {
    #wait_for_init $!
    #------------------------------------------------------------------------------#
    #      ADD COMMANDS TO START APPLICATION SERVICES HERE
-    <% if $apprc::service_start == true { -%>
-    $apprc::service_start
-    <% } -%>
-
+   <% $apprc::service_stop -%>
   
    #  If application takes so long to startup, the script will put a misleading 
    #  message to standard output.  To correct, you comment out the # in front of 
@@ -351,10 +348,7 @@ stopblock() {
    #wait_for_term $!
    #------------------------------------------------------------------------------#
    #      ADD COMMANDS TO STOP APPLICATION SERVICES HERE
-    <% if $apprc::service_stop == true { -%>
-    $apprc::service_stop
-    <% } -%>
-
+   <% $apprc::service_stop -%>
 
    #------------------------------------------------------------------------------#
    # END OF STOP BLOCK
