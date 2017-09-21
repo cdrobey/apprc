@@ -33,7 +33,7 @@ class apprc (
         mode    => '0755',
         content => epp('apprc/apprc_validate.epp'),
     }
-    service { 'testing':
+    service { '$service_name':
         ensure     => 'running',
         hasrestart => true,
         hasstatus  => true,
