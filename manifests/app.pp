@@ -7,11 +7,11 @@
 # @example
 #   apprc::app { 'namevar': }
 define apprc::app(
-    $app_name     = undef,
-    $app_validate = undef,
-    $app_start    = undef,
-    $app_stop     = undef,
-    $app_proc     = undef,
+    $app_name,
+    $app_validate,
+    $app_start,
+    $app_stop,
+    $app_proc,
 ) {
     file { "/etc/init.d/${app_name}":
         ensure  => file,

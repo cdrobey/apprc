@@ -14,7 +14,7 @@
 # @example
 #   include apprc
 class apprc (
-  Hash $apps,
+  $apps,
 ){
     $apps.each | $app, $app_data | {
         apprc::app { $app:
