@@ -14,10 +14,14 @@
 # @example
 #   include apprc
 class apprc (
-  $service_name     = 'Default_SVC',
-  $service_validate = 'Default_VALIDATE',
-  $service_start    = "echo \"This isn't defined.\"",
-  $service_stop     = "echo \"This isn't defined.\"",
+  #$service_name     = 'Default_SVC',
+  #$service_validate = 'Default_VALIDATE',
+  #$service_start    = "echo \"This isn't defined.\"",
+  #$service_stop     = "echo \"This isn't defined.\"",
+  $service_name     = undef,
+  $service_validate = undef,
+  $service_start    = undef,
+  $service_stop     = undef,
 ){
     file { "/etc/init.d/${service_name}":
         ensure  => file,
