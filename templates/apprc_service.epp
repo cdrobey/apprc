@@ -307,8 +307,8 @@ startblock() {
    #wait_for_init $!
    #------------------------------------------------------------------------------#
    #      ADD COMMANDS TO START APPLICATION SERVICES HERE
-    <% if $apprc::start == true { -%>
-    $apprc::start
+    <% if $apprc::service_start == true { -%>
+    $apprc::service_start
     <% } -%>
 
   
@@ -351,8 +351,8 @@ stopblock() {
    #wait_for_term $!
    #------------------------------------------------------------------------------#
    #      ADD COMMANDS TO STOP APPLICATION SERVICES HERE
-    <% if $apprc::stop == true { -%>
-    $apprc::stopp
+    <% if $apprc::service_stop == true { -%>
+    $apprc::service_stop
     <% } -%>
 
 
