@@ -16,7 +16,7 @@
 class apprc (
   $service_name     = 'Default_SVC',
   $service_validate = 'Default_VALIDATE',
-  $service_art      = undef,
+  $service_start    = undef,
   $service_stop     = undef,
 ){
     file { "/etc/init.d/${service_name}":
