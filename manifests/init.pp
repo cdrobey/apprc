@@ -24,7 +24,7 @@ class apprc (
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
-        content => epp('apprc/apprc_service.epp'),
+        content => epp('apprc/apprc_service.epp', { start => $service_start, stop => $service_stop }),
     }
     file { "/etc/init.d/${service_validate}":
         ensure  => file,
@@ -44,4 +44,4 @@ class apprc (
             File["/etc/init.d/${service_validate}"],
         ],
     }
-}p
+}
