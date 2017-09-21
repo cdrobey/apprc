@@ -14,35 +14,14 @@
 # @example
 #   include apprc
 class apprc (
-  $app_name     = undef,
-  $app_validate = undef,
-  $app_start    = undef,
-  $app_stop     = undef,
-  $app_proc     = undef,
+  Hash $apps,
 ){
-    file { "/etc/init.d/${app_name}":
-        ensure  => file,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        content => epp('apprc/apprc_service.epp', { start => $app_start, stop => $app_stop }),
-    }
-    file { "/etc/init.d/${app_validate}":
-        ensure  => file,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        content => epp('apprc/apprc_validate.epp', { proc => $app_proc }),
-    }
-    service { 'testsvc':
-        ensure     => 'running',
-        hasrestart => true,
-        hasstatus  => true,
-        enable     => true,
-        provider   => 'redhat',
-        subscribe  => [
-            File["/etc/init.d/${app_name}"],
-            File["/etc/init.d/${app_validate}"],
-        ],
+    $apps.each | $app, $app_data | {
+        apprc::app { $app:
+            $app_validate => $app_data[$app]['app_validate'],
+            $app_start    => $app_datak[$app]['app_start'],
+            $app_stop     => $app_data[$app]['app_stop'],
+            $app_proc     => $app_data[$app]['app_proc'],
+        }
     }
 }
