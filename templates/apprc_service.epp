@@ -307,7 +307,7 @@ startblock() {
    #wait_for_init $!
    #------------------------------------------------------------------------------#
    #      ADD COMMANDS TO START APPLICATION SERVICES HERE
-  
+    <%= $start %>
    #  If application takes so long to startup, the script will put a misleading 
    #  message to standard output.  To correct, you comment out the # in front of 
    #  wait_for_init_n_validation function. If you don't want to see the warning 
