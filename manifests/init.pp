@@ -16,8 +16,8 @@
 class apprc (
   $apps,
 ){
-    $apps.each | $title, $app_data | {
-        apprc::app { $title:
+    $apps.each | $app_name, $app_data | {
+        apprc::app { $app_name:
             app_name     => $app_data['app_name'],
             app_validate => $app_data['app_validate'],
             app_start    => $app_data['app_start'],
