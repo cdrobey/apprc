@@ -14,28 +14,25 @@
 # @example
 #   include apprc
 class apprc (
-  #$service_name     = 'Default_SVC',
-  #$service_validate = 'Default_VALIDATE',
-  #$service_start    = "echo \"This isn't defined.\"",
-  #$service_stop     = "echo \"This isn't defined.\"",
-  $service_name     = undef,
-  $service_validate = undef,
-  $service_start    = undef,
-  $service_stop     = undef,
+  $app_name     = undef,
+  $app_validate = undef,
+  $app_start    = undef,
+  $app_stop     = undef,
+  $app_proc     = undef,
 ){
-    file { "/etc/init.d/${service_name}":
+    file { "/etc/init.d/${app_name}":
         ensure  => file,
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
-        content => epp('apprc/apprc_service.epp', { start => $service_start, stop => $service_stop }),
+        content => epp('apprc/apprc_service.epp', { start => $app_start, stop => $app_stop }),
     }
-    file { "/etc/init.d/${service_validate}":
+    file { "/etc/init.d/${app_validate}":
         ensure  => file,
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
-        content => epp('apprc/apprc_validate.epp'),
+        content => epp('apprc/apprc_validate.epp', { proc => $app_proc }),
     }
     service { 'testsvc':
         ensure     => 'running',
@@ -44,8 +41,8 @@ class apprc (
         enable     => true,
         provider   => 'redhat',
         subscribe  => [
-            File["/etc/init.d/${service_name}"],
-            File["/etc/init.d/${service_validate}"],
+            File["/etc/init.d/${app_name}"],
+            File["/etc/init.d/${app_validate}"],
         ],
     }
 }

@@ -62,31 +62,10 @@ echo "Application validation checking..."
 # check wasadm dmgr process
 #------------------------------------------
 #Check Process 1:
-check_process "cskpcloudxn0315Cell03 DMGRUAT03 dmgr" 
+check_process <%= $proc %>
 P1=$?
 PC=$P1
-get_status $P1 "cskpcloudxn0315Cell03 DMGRUAT03 dmgr"
-
-#Check Process 2:
-check_process "cskpcloudxn0315Cell04 DMGRUAT04 dmgr" 
-P1=$?
-get_status $P1 "cskpcloudxn0315Cell04 DMGRUAT04 dmgr"
-PC=`expr $PC + $P1`
-
-
-#Check Process 3:
-check_process "cskpcloudxn0315Cell02 DMGRUAT02 dmgr" 
-P1=$?
-get_status $P1 "cskpcloudxn0315Cell02 DMGRUAT02 dmgr"
-PC=`expr $PC + $P1`
-
-
-#Check Process 4:
-check_process "cskpcloudxn0315Cell01 DMGRUAT01 dmgr" 
-P1=$?
-get_status $P1 "cskpcloudxn0315Cell01 DMGRUAT01 dmgr"
-PC=`expr $PC + $P1`
-RC=$PC
+get_status $P1 "cskpcloudxn0315Cell03 DMGRUAT03 <%= $proc %>"
 
 if [ $RC -eq 0 ] # SUCCESS
 then
