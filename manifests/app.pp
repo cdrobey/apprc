@@ -27,7 +27,7 @@ define apprc::app(
         mode    => '0755',
         content => epp('apprc/apprc_validate.epp', { proc => $app_proc }),
     }
-    service { '$app_name':
+    service { $app_name:
         ensure     => 'running',
         hasrestart => true,
         hasstatus  => true,

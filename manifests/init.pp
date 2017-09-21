@@ -18,10 +18,10 @@ class apprc (
 ){
     $apps.each | $app, $app_data | {
         apprc::app { $app:
-            $app_validate => $app_data['app_validate'],
-            $app_start    => $app_data['app_start'],
-            $app_stop     => $app_data['app_stop'],
-            $app_proc     => $app_data['app_proc'],
+            app_validate => $app_data['app_validate'],
+            app_start    => $app_data['app_start'],
+            app_stop     => $app_data['app_stop'],
+            app_proc     => $app_data['app_proc'],
         }
     }
 }
